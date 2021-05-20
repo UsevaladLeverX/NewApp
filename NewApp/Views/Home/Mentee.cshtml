@@ -1,0 +1,66 @@
+﻿@model IEnumerable<NewApp.Services.Views.IndexMenteeView>
+
+@{
+    ViewData["Title"] = "Mentee";
+}
+
+<h1>Mentee</h1>
+
+<p>
+    @*<a asp-action="Create">Create New</a>*@
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <thead>
+        @using (Html.BeginForm("HomeController", "IndexMenteeView", FormMethod.Post))
+        {
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.MenteeId)
+            </th>
+            <th>
+                @Html.ActionLink("Mentee Name", "Mentee", new { sortOrder = ViewBag.NameSortParm })
+                @*@Html.DisplayNameFor(model => model.MenteeName)*@
+            </th>
+            <th>
+                @Html.ActionLink("Age", "Mentee", new { sortOrder = ViewBag.AgeSortParm })
+                @*@Html.DisplayNameFor(model => model.Age)*@
+            </th>
+            <th>
+                @*@Html.DisplayNameFor(model => model.Level.Position)*@
+                @Html.ActionLink("Position", "Mentee", new { sortOrder = ViewBag.PosSortParm })
+                @*@Html.DisplayNameFor(model => model.Level.Position)*@
+            </th>
+            <th></th>
+        </tr>
+        }
+    </thead>
+    <tbody>
+        @using (Html.BeginForm("HomeController", "IndexMenteeView", FormMethod.Post))
+        {
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.MenteeId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.MenteeName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Age)
+                    </td>
+                    <td>                        
+                        @Html.DisplayFor(modelItem => item.Position)
+                        @*@Html.DisplayFor(modelItem => item.Position)*@
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.MenteeId">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.MenteeId">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.MenteeId">Delete</a>
+                    </td>
+                </tr>
+             }
+         }
+        </tbody>
+</table>
