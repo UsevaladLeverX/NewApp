@@ -1,0 +1,24 @@
+﻿@model NewApp.Services.Views.EditLevelView
+
+@{
+    ViewData["Title"] = "DetailsLevel";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Level</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Position)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Position)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="EditLevel" asp-route-id="@Model.LevelId">Edit</a> |
+    <a asp-action="Level">Back to List</a>
+</div>
