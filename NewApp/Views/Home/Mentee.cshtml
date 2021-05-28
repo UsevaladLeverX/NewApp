@@ -45,13 +45,13 @@
                 @Html.DisplayNameFor(model => model.MenteeId)
             </th>
             <th>
-                @Html.ActionLink("Mentee Name", "Mentee", new { sortOrder = ViewBag.NameSortParm })
+                @Html.ActionLink($"Mentee Name {ViewBag.Name}", "Mentee", new { sortOrder = ViewBag.NameSortParm })
             </th>
             <th>
-                @Html.ActionLink("Age", "Mentee", new { sortOrder = ViewBag.AgeSortParm })
+                @Html.ActionLink($"Age {ViewBag.Age}", "Mentee", new { sortOrder = ViewBag.AgeSortParm })
             </th>
             <th>
-                @Html.ActionLink("Position", "Mentee", new { sortOrder = ViewBag.PosSortParm })
+                @Html.ActionLink($"Position {ViewBag.Pos}", "Mentee", new { sortOrder = ViewBag.PosSortParm })
             </th>
             <th></th>
         </tr>

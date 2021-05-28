@@ -4,8 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using NewApp.Infrastructure.Data;
 
-namespace NewApp.Infrastructure.Data
+namespace NewApp.Services.Views
 {
     public class UnitOfWork
     {

@@ -58,6 +58,9 @@ namespace NewApp.Controllers
                     }
                 }
             }
+            if (SearchLetter == null)
+                return View("Mentee");
+            else
             return View("Mentee", mentees.Where(m => m.MenteeName.Contains(SearchLetter)));
         }
 
@@ -77,7 +80,10 @@ namespace NewApp.Controllers
                     }
                 }
             }
-            return View("Mentee", mentees.Where(m => m.ViewPos.Contains(SearchLetter)));
+            if (SearchLetter == null)
+                return View("Mentee");
+            else
+                return View("Mentee", mentees.Where(m => m.ViewPos.Contains(SearchLetter)));
         }
 
         public ActionResult Mentee(string sortOrder)
@@ -104,22 +110,28 @@ namespace NewApp.Controllers
             switch (sortOrder)
             {
                 case "Name":
+                    ViewBag.Name = " ▲";
                     mentee = mentee.OrderBy(s => s.MenteeName);
                     break;
                 case "name_des":
+                    ViewBag.Name= " ▼";
                     mentee = mentee.OrderByDescending(s => s.MenteeName);
                     break;
                 case "Age":
+                    ViewBag.Age = " ▲";
                     mentee = mentee.OrderBy(s => s.Age);
                     break;
                 case "Age_des":
+                    ViewBag.Age = " ▼";
                     mentee = mentee.OrderByDescending(s => s.Age);
                     break;
                 case "Position":
-                    mentee = mentee.OrderBy(s => s.ViewPos);
+                    ViewBag.Pos = " ▲";
+                    mentee = mentee.OrderBy(s => s.Position);
                     break;
                 case "Pos_des":
-                    mentee = mentee.OrderByDescending(s => s.ViewPos);
+                    ViewBag.Pos = " ▼";
+                    mentee = mentee.OrderByDescending(s => s.Position);
                     break;
                 default:
                     mentee = mentee.OrderBy(s => s.MenteeId);
@@ -233,6 +245,8 @@ namespace NewApp.Controllers
             var mapper = new Mapper(config);
             var model = unitOfWork.Mentee.Get(id);
             DeleteMenteeView mentee = mapper.Map<Mentee, DeleteMenteeView>(model);
+            //unitOfWork.Mentee.Delete(mentee.MenteeId);
+        //    //unitOfWork.Save();
             foreach (var pos in unitOfWork.Level.GetAll())
             {
                 if (mentee.Position == pos.LevelId.ToString())
@@ -243,21 +257,21 @@ namespace NewApp.Controllers
                 return NotFound();
             }
 
-            return View(mentee);
+            return View("Mentee");
         }
 
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(int id, DeleteMenteeView model)
-        {
-            var config = new MapperConfiguration(cfg => cfg.CreateMap<DeleteMenteeView, Mentee>().
-             ForMember("LevelId", opt => opt.MapFrom(c => c.Position)));
-            var mapper = new Mapper(config);
-            Mentee mentee = mapper.Map<DeleteMenteeView, Mentee>(model);
-            unitOfWork.Mentee.Delete(mentee.MenteeId);
-            unitOfWork.Save();
-            return RedirectToAction(nameof(Mentee));
-        }
+        //[HttpPost, ActionName("Delete")]
+        //[ValidateAntiForgeryToken]
+        //public IActionResult Delete(int id, DeleteMenteeView model)
+        //{
+        //    //var config = new MapperConfiguration(cfg => cfg.CreateMap<DeleteMenteeView, Mentee>().
+        //    // ForMember("LevelId", opt => opt.MapFrom(c => c.Position)));
+        //    //var mapper = new Mapper(config);
+        //    //Mentee mentee = mapper.Map<DeleteMenteeView, Mentee>(model);
+        //    //unitOfWork.Mentee.Delete(mentee.MenteeId);
+        //    //unitOfWork.Save();
+        //    //return RedirectToAction(nameof(Mentee));
+        //}
 
         public async Task<IActionResult> Details(int id)
         {
