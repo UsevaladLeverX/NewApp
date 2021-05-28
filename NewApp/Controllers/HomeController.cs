@@ -42,7 +42,7 @@ namespace NewApp.Controllers
             return View();
         }
 
-        public async Task<IActionResult> ShowSearchResultsName(String SearchLetter)
+        public async Task<IActionResult> ShowSearchResultsName(string SearchLetter)
         {
             var config = new MapperConfiguration(cfg => cfg.CreateMap<Mentee, IndexMenteeView>().
             ForMember("Position", opt => opt.MapFrom(c => c.LevelId)));
@@ -64,7 +64,7 @@ namespace NewApp.Controllers
             return View("Mentee", mentees.Where(m => m.MenteeName.Contains(SearchLetter)));
         }
 
-        public async Task<IActionResult> ShowSearchResultsPos(String SearchLetter)
+        public async Task<IActionResult> ShowSearchResultsPos(string SearchLetter)
         {
             var config = new MapperConfiguration(cfg => cfg.CreateMap<Mentee, IndexMenteeView>().
             ForMember("Position", opt => opt.MapFrom(c => c.LevelId)));
@@ -241,37 +241,14 @@ namespace NewApp.Controllers
         public IActionResult Delete(int id)
         {
             var config = new MapperConfiguration(cfg => cfg.CreateMap<Mentee, DeleteMenteeView>().
-            ForMember("Position", opt => opt.MapFrom(c => c.LevelId)));
+        ForMember("Position", opt => opt.MapFrom(c => c.LevelId)));
             var mapper = new Mapper(config);
             var model = unitOfWork.Mentee.Get(id);
             DeleteMenteeView mentee = mapper.Map<Mentee, DeleteMenteeView>(model);
-            //unitOfWork.Mentee.Delete(mentee.MenteeId);
-        //    //unitOfWork.Save();
-            foreach (var pos in unitOfWork.Level.GetAll())
-            {
-                if (mentee.Position == pos.LevelId.ToString())
-                    mentee.ViewPos = pos.Position;
-            }
-            if (mentee == null)
-            {
-                return NotFound();
-            }
-
-            return View("Mentee");
+            unitOfWork.Mentee.Delete(mentee.MenteeId);
+            unitOfWork.Save();
+            return RedirectToAction(nameof(Mentee));
         }
-
-        //[HttpPost, ActionName("Delete")]
-        //[ValidateAntiForgeryToken]
-        //public IActionResult Delete(int id, DeleteMenteeView model)
-        //{
-        //    //var config = new MapperConfiguration(cfg => cfg.CreateMap<DeleteMenteeView, Mentee>().
-        //    // ForMember("LevelId", opt => opt.MapFrom(c => c.Position)));
-        //    //var mapper = new Mapper(config);
-        //    //Mentee mentee = mapper.Map<DeleteMenteeView, Mentee>(model);
-        //    //unitOfWork.Mentee.Delete(mentee.MenteeId);
-        //    //unitOfWork.Save();
-        //    //return RedirectToAction(nameof(Mentee));
-        //}
 
         public async Task<IActionResult> Details(int id)
         {
@@ -359,21 +336,6 @@ namespace NewApp.Controllers
             var mapper = new Mapper(config);
             var model = unitOfWork.Level.Get(id);
             DeleteLevelView level = mapper.Map<Level, DeleteLevelView>(model);
-            if (level == null)
-            {
-                return NotFound();
-            }
-            return View(level);
-        }
-
-        [HttpPost, ActionName("DeleteLevel")]
-        [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmedLevel(int id, DeleteLevelView model)
-        {
-            var config = new MapperConfiguration(cfg => cfg.CreateMap<DeleteLevelView, Level>().
-             ForMember("Position", opt => opt.MapFrom(c => c.Position)));
-            var mapper = new Mapper(config);
-            Level level = mapper.Map<DeleteLevelView, Level>(model);
             unitOfWork.Level.Delete(level.LevelId);
             unitOfWork.Save();
             return RedirectToAction(nameof(Level));
