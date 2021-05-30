@@ -54,6 +54,7 @@ namespace NewApp
             services.AddTransient<IIndexConfig<IndexLevelView>, IndexLevelMapper>();
             services.AddTransient<ICreateConfig<Level, CreateLevelView>, CreateLevelMapper>();
             services.AddTransient<IEditConfig<EditLevelView, Level>, EditLevelMapper>();
+            services.AddTransient<IDeleteConfig<DeleteLevelView>, DeleteLevelMapper>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

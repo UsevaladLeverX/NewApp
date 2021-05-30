@@ -15,12 +15,12 @@ namespace NewApp.Controllers
         private readonly IIndexConfig<IndexLevelView> indexConfig;
         private readonly ICreateConfig<Level, CreateLevelView> createConfig;
         private readonly IEditConfig<EditLevelView, Level> editConfig;
-        private readonly IDeleteConfig<DeleteMenteeView> deleteConfig;
+        private readonly IDeleteConfig<DeleteLevelView> deleteConfig;
         public LevelController(ILevelRepository _levelRepository,
             IIndexConfig<IndexLevelView> _indexConfig,
             ICreateConfig<Level, CreateLevelView> _createConfig,
             IEditConfig<EditLevelView, Level> _editConfig,
-            IDeleteConfig<DeleteMenteeView> _deleteConfig)
+            IDeleteConfig<DeleteLevelView> _deleteConfig)
         {
             this.indexConfig = _indexConfig;
             this.levelRepository = _levelRepository;
@@ -61,9 +61,27 @@ namespace NewApp.Controllers
             {
                 levelRepository.Update(editConfig.Config_2(model));
                 levelRepository.Save();
-                return RedirectToAction("Level");
+                return RedirectToAction("Index");
             }
             return View(model);
+        }
+        public IActionResult Delete(int id)
+        {
+            levelRepository.Delete(deleteConfig.Config(id).LevelId);
+            levelRepository.Save();
+            return RedirectToAction(nameof(Index));
+        }
+        public async Task<IActionResult> Details(int id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            if (editConfig.Config_1(id) == null)
+            {
+                return NotFound();
+            }
+            return View(editConfig.Config_1(id));
         }
     }
 }
