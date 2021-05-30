@@ -17,7 +17,7 @@ namespace NewApp.Controllers
 {
     public class HomeController : Controller
     {
-        private UnitOfWork unitOfWork;
+        private UnitOfWork unitOfWork; 
         public HomeController()
         {
             unitOfWork = new UnitOfWork();
@@ -59,7 +59,7 @@ namespace NewApp.Controllers
                 }
             }
             if (SearchLetter == null)
-                return View("Mentee");
+                return View("Mentee", mentees);
             else
             return View("Mentee", mentees.Where(m => m.MenteeName.Contains(SearchLetter)));
         }
@@ -81,7 +81,7 @@ namespace NewApp.Controllers
                 }
             }
             if (SearchLetter == null)
-                return View("Mentee");
+                return View("Mentee", mentees);
             else
                 return View("Mentee", mentees.Where(m => m.ViewPos.Contains(SearchLetter)));
         }

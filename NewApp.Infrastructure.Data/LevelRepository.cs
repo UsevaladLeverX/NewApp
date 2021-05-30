@@ -9,12 +9,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace NewApp.Infrastructure.Data
 {
-    public class LevelRepository:IRepository<Level>
+    public class LevelRepository:ILevelRepository
     {
         private OnionAppContext db;
         public LevelRepository(OnionAppContext context)
         {
-            db = context;
+            db = new OnionAppContext();
         }
         public IEnumerable<Level> GetAll()
         {
@@ -37,6 +37,10 @@ namespace NewApp.Infrastructure.Data
             Level Level = db.Level.Find(id);
             if (Level != null)
                 db.Level.Remove(Level);
+        }
+        public void Save()
+        {
+            db.SaveChanges();
         }
     }
 }

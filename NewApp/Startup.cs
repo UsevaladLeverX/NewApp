@@ -43,14 +43,10 @@ namespace NewApp
             var connection = @"Server=LXIBY1166\SQLEXPRESS;Database=LeverApp;Trusted_Connection=True;";
             services.AddDbContext<OnionAppContext>(options => options.UseSqlServer(connection));
             services.AddMvc();
-            //services.AddScoped<IService>(provider => {
-            //    var dependency = provider.GetRequiredService<IDependency>();
-            //    // You can select the constructor you want here.
-            //    return new Service(dependency);
-            //});
-            //services.AddScoped<IRepository<>, MenteeRepository>();
-            //services.AddScoped<ILevelRepository, LevelRepository>();
             services.AddControllersWithViews();
+            services.AddTransient<IMenteeRepository, MenteeRepository>();
+            services.AddTransient<ILevelRepository, LevelRepository>();
+            services.AddTransient<IIndexConfig<IndexMenteeView>, IndexMenteeMapper>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

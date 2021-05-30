@@ -9,12 +9,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace NewApp.Infrastructure.Data
 {
-    public class MenteeRepository : IRepository<Mentee>
+    public class MenteeRepository : IMenteeRepository
     {
         private OnionAppContext db;
         public MenteeRepository(OnionAppContext context)
         {
-            db = context;
+            this.db = new OnionAppContext();
         }
         public IEnumerable<Mentee> GetAll()
         {
@@ -37,6 +37,10 @@ namespace NewApp.Infrastructure.Data
             Mentee Mentee = db.Mentee.Find(id);
             if (Mentee != null)
                 db.Mentee.Remove(Mentee);
+        }
+        public void Save()
+        {
+            db.SaveChanges();
         }
     }
 }
