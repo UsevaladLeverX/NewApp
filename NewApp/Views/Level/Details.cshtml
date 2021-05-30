@@ -1,7 +1,7 @@
 ﻿@model NewApp.Services.Views.EditLevelView
 
 @{
-    ViewData["Title"] = "DetailsLevel";
+    ViewData["Title"] = "Details";
 }
 
 <h1>Details</h1>
@@ -19,6 +19,6 @@
     </dl>
 </div>
 <div>
-    <a asp-action="EditLevel" asp-route-id="@Model.LevelId">Edit</a> |
-    <a asp-action="Level">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model.LevelId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
 </div>

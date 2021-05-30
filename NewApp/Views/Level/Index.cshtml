@@ -1,13 +1,13 @@
 ﻿@model IEnumerable<NewApp.Services.Views.IndexLevelView>
 
 @{
-    ViewData["Title"] = "Level";
+    ViewData["Title"] = "Index";
 }
 
 <h1>Level</h1>
 
 <p>
-    <a asp-action="CreateLevel">Create New</a>
+    <a asp-action="Create">Create New</a>
 </p>
 <table class="table">
     <thead>
@@ -26,9 +26,9 @@
                         @Html.DisplayFor(modelItem => item.Position)
                     </td>
                     <td>
-                        <a asp-action="EditLevel" asp-route-id="@item.LevelId">Edit</a> |
-                        <a asp-action="DetailsLevel" asp-route-id="@item.LevelId">Details</a> |
-                        <a asp-action="DeleteLevel" asp-route-id="@item.LevelId">Delete</a>
+                        <a asp-action="Edit" asp-route-id="@item.LevelId">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.LevelId">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.LevelId">Delete</a>
                     </td>
                 </tr>
             }

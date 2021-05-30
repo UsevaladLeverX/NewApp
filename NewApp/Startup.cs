@@ -17,6 +17,7 @@ using Microsoft.Web;
 using System.Fabric.Query;
 using AutoMapper;
 using NewApp.Services.Views;
+using NewApp.Domain.Core;
 
 namespace NewApp
 {
@@ -47,6 +48,12 @@ namespace NewApp
             services.AddTransient<IMenteeRepository, MenteeRepository>();
             services.AddTransient<ILevelRepository, LevelRepository>();
             services.AddTransient<IIndexConfig<IndexMenteeView>, IndexMenteeMapper>();
+            services.AddTransient<ICreateConfig<Mentee, CreateMenteeView>, CreateMenteeMapper>();
+            services.AddTransient<IEditConfig<EditMenteeView, Mentee>, EditMenteeMapper>();
+            services.AddTransient<IDeleteConfig<DeleteMenteeView>, DeleteMenteeMapper>();
+            services.AddTransient<IIndexConfig<IndexLevelView>, IndexLevelMapper>();
+            services.AddTransient<ICreateConfig<Level, CreateLevelView>, CreateLevelMapper>();
+            services.AddTransient<IEditConfig<EditLevelView, Level>, EditLevelMapper>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

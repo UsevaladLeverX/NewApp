@@ -14,17 +14,43 @@ namespace NewApp.Controllers
         private readonly IMenteeRepository menteeRepository;
         private readonly ILevelRepository levelRepository;
         private readonly IIndexConfig<IndexMenteeView> indexConfig;
-        public MenteeController(IMenteeRepository _imenteeRepository,ILevelRepository _levelRepository, IIndexConfig<IndexMenteeView> _indexConfig)
+        private readonly ICreateConfig<Mentee, CreateMenteeView> createConfig;
+        private readonly IEditConfig<EditMenteeView, Mentee> editConfig;
+        private readonly IDeleteConfig<DeleteMenteeView> deleteConfig;
+        public MenteeController(IMenteeRepository _imenteeRepository, ILevelRepository _levelRepository,
+            IIndexConfig<IndexMenteeView> _indexConfig, 
+            ICreateConfig<Mentee, CreateMenteeView> _createConfig,
+            IEditConfig<EditMenteeView, Mentee> _editConfig,
+            IDeleteConfig<DeleteMenteeView> _deleteConfig)
         {
             this.menteeRepository = _imenteeRepository;
             this.indexConfig = _indexConfig;
             this.levelRepository = _levelRepository;
+            this.createConfig = _createConfig;
+            this.editConfig = _editConfig;
+            this.deleteConfig = _deleteConfig;
         }
 
         public async Task<IActionResult> ShowSearchForm()
         {
             indexConfig.Config();
             return View();
+        }
+
+        public async Task<IActionResult> ShowSearchResultsName(string SearchLetter)
+        {
+            if (SearchLetter == null)
+                return View("Index", indexConfig.Config());
+            else
+                return View("Index", indexConfig.Config().Where(m => m.MenteeName.Contains(SearchLetter)));
+        }
+
+        public async Task<IActionResult> ShowSearchResultsPos(string SearchLetter)
+        {
+            if (SearchLetter == null)
+                return View("Index", indexConfig.Config());
+            else
+                return View("Index", indexConfig.Config().Where(m => m.ViewPos.Contains(SearchLetter)));
         }
 
         public IActionResult Index(string sortOrder)
@@ -65,6 +91,62 @@ namespace NewApp.Controllers
                     break;
             }
             return View(mentee.ToList());
+        }
+
+        public IActionResult Create()
+        {
+            ViewBag.Positions = createConfig.Positions();
+            return View();
+        }
+        [HttpPost]
+        public ActionResult Create(CreateMenteeView model)
+        {
+            ViewBag.Positions = createConfig.Positions();
+            if (ModelState.IsValid)
+            {
+                var mentee=createConfig.Config(model);
+                menteeRepository.Create(mentee);
+                menteeRepository.Save();
+                return RedirectToAction("Index");
+            }
+            return View();
+        }
+        public ActionResult Edit(int? id)
+        {
+            ViewBag.Positions = editConfig.Positions();
+            if (id == null)
+                return View();
+            return View(editConfig.Config_1(id));
+        }
+        [HttpPost]
+        public ActionResult Edit(EditMenteeView model)
+        {
+            ViewBag.Positions = editConfig.Positions();
+            if (ModelState.IsValid)
+            {
+                menteeRepository.Update(editConfig.Config_2(model));
+                menteeRepository.Save();
+                return RedirectToAction("Index");
+            }
+            return View(model);
+        }
+        public IActionResult Delete(int id)
+        {
+            menteeRepository.Delete(deleteConfig.Config(id).MenteeId);
+            menteeRepository.Save();
+            return RedirectToAction(nameof(Index));
+        }
+        public async Task<IActionResult> Details(int id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            if (editConfig.Config_1(id) == null)
+            {
+                return NotFound();
+            }
+            return View(editConfig.Config_1(id));
         }
     }
 }

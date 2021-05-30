@@ -1,7 +1,7 @@
 ﻿@model NewApp.Services.Views.DeleteLevelView
 
 @{
-    ViewData["Title"] = "DeleteLevel";
+    ViewData["Title"] = "Delete";
 }
 
 <h1>Delete</h1>
@@ -19,9 +19,9 @@
         </dd>
     </dl>
 
-    <form asp-action="DeleteLevel">
+    <form asp-action="Delete">
         <input type="hidden" asp-for="LevelId" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Level">Back to List</a>
+        <a asp-action="Index">Back to List</a>
     </form>
 </div>
