@@ -11,11 +11,11 @@ using NewApp.Services.Views.IMapper;
 
 namespace NewApp.Services.Views
 {
-    public class MyMapper:IMyMapper
+    public class Mapper: IMapper.IMapper
     {
         private readonly IMenteeRepository menteeRepository;
         private readonly ILevelRepository levelRepository;
-        public MyMapper(IMenteeRepository _menteeRepository, ILevelRepository _levelRepository)
+        public Mapper(IMenteeRepository _menteeRepository, ILevelRepository _levelRepository)
         {
             this.menteeRepository = _menteeRepository;
             this.levelRepository = _levelRepository;
@@ -40,7 +40,7 @@ namespace NewApp.Services.Views
         {
             var config = new MapperConfiguration(cfg => cfg.CreateMap<CreateLevelView, Level>().
                 ForMember("Position", opt => opt.MapFrom(c => c.Position)));
-            var mapper = new Mapper(config);
+            var mapper = new AutoMapper.Mapper(config);
             Level level = mapper.Map<CreateLevelView, Level>(model);
             return level;
         }
@@ -48,7 +48,7 @@ namespace NewApp.Services.Views
         {
             var config = new MapperConfiguration(cfg => cfg.CreateMap<CreateMenteeView, Mentee>().
                ForMember("LevelId", opt => opt.MapFrom(c => c.Position)));
-            var mapper = new Mapper(config);
+            var mapper = new AutoMapper.Mapper(config);
             Mentee mentee = mapper.Map<CreateMenteeView, Mentee>(model);
             return mentee;
         }
@@ -56,7 +56,7 @@ namespace NewApp.Services.Views
         {
             var config = new MapperConfiguration(cfg => cfg.CreateMap<Level, DeleteLevelView>().
            ForMember("Position", opt => opt.MapFrom(c => c.Position)));
-            var mapper = new Mapper(config);
+            var mapper = new AutoMapper.Mapper(config);
             var model = levelRepository.Get(id);
             DeleteLevelView level = mapper.Map<Level, DeleteLevelView>(model);
             return level;
@@ -65,7 +65,7 @@ namespace NewApp.Services.Views
         {
             var config = new MapperConfiguration(cfg => cfg.CreateMap<Mentee, DeleteMenteeView>().
        ForMember("Position", opt => opt.MapFrom(c => c.LevelId)));
-            var mapper = new Mapper(config);
+            var mapper = new AutoMapper.Mapper(config);
             var model = menteeRepository.Get(id);
             DeleteMenteeView mentee = mapper.Map<Mentee, DeleteMenteeView>(model);
             return mentee;
@@ -74,7 +74,7 @@ namespace NewApp.Services.Views
         {
             var config = new MapperConfiguration(cfg => cfg.CreateMap<Level, EditLevelView>().
             ForMember("Position", opt => opt.MapFrom(c => c.Position)));
-            var mapper = new Mapper(config);
+            var mapper = new AutoMapper.Mapper(config);
             var model = levelRepository.Get(id.Value);
             EditLevelView level = mapper.Map<Level, EditLevelView>(model);
             return level;
@@ -83,7 +83,7 @@ namespace NewApp.Services.Views
         {
             var config = new MapperConfiguration(cfg => cfg.CreateMap<EditLevelView, Level>().
                   ForMember("Position", opt => opt.MapFrom(c => c.Position)));
-            var mapper = new Mapper(config);
+            var mapper = new AutoMapper.Mapper(config);
             Level level = mapper.Map<EditLevelView, Level>(model);
             return level;
         }
@@ -91,7 +91,7 @@ namespace NewApp.Services.Views
         {
             var config = new MapperConfiguration(cfg => cfg.CreateMap<Mentee, EditMenteeView>().
             ForMember("Position", opt => opt.MapFrom(c => c.LevelId)));
-            var mapper = new Mapper(config);
+            var mapper = new AutoMapper.Mapper(config);
             var model = menteeRepository.Get(id.Value);
             EditMenteeView mentee = mapper.Map<Mentee, EditMenteeView>(model);
             foreach (var pos in levelRepository.GetAll())
@@ -105,7 +105,7 @@ namespace NewApp.Services.Views
         {
             var config = new MapperConfiguration(cfg => cfg.CreateMap<EditMenteeView, Mentee>().
                  ForMember("LevelId", opt => opt.MapFrom(c => c.Position)));
-            var mapper = new Mapper(config);
+            var mapper = new AutoMapper.Mapper(config);
             Mentee mentee = mapper.Map<EditMenteeView, Mentee>(model);
             return mentee;
         }
@@ -113,7 +113,7 @@ namespace NewApp.Services.Views
         {
             var config = new MapperConfiguration(cfg => cfg.CreateMap<Level, IndexLevelView>().
             ForMember("LevelId", opt => opt.MapFrom(c => c.LevelId)));
-            var mapper = new Mapper(config);
+            var mapper = new AutoMapper.Mapper(config);
             var levels = mapper.Map<List<IndexLevelView>>(levelRepository.GetAll());
             return levels;
         }
@@ -121,7 +121,7 @@ namespace NewApp.Services.Views
         {
             var config = new MapperConfiguration(cfg => cfg.CreateMap<Mentee, IndexMenteeView>().
             ForMember("Position", opt => opt.MapFrom(c => c.LevelId)));
-            var mapper = new Mapper(config);
+            var mapper = new AutoMapper.Mapper(config);
             var mentees = mapper.Map<List<IndexMenteeView>>(menteeRepository.GetAll());
             foreach (var item in mentees)
             {

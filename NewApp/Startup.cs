@@ -15,7 +15,6 @@ using NewApp.Infrastructure.Data;
 using Microsoft.ServiceFabric.Services.Remoting;
 using Microsoft.Web;
 using System.Fabric.Query;
-using AutoMapper;
 using NewApp.Services.Views;
 using NewApp.Domain.Core;
 using NewApp.Services.Views.IMapper;
@@ -48,7 +47,7 @@ namespace NewApp
             services.AddControllersWithViews();
             services.AddTransient<IMenteeRepository, MenteeRepository>();
             services.AddTransient<ILevelRepository, LevelRepository>();
-            services.AddScoped<IMyMapper, MyMapper>();
+            services.AddScoped<IMapper, Mapper>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

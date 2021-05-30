@@ -14,9 +14,9 @@ namespace NewApp.Controllers
     {
         private readonly IMenteeRepository menteeRepository;
         private readonly ILevelRepository levelRepository;
-        private readonly IMyMapper myMapper;
+        private readonly IMapper myMapper;
         public MenteeController(IMenteeRepository _imenteeRepository, ILevelRepository _levelRepository,
-            IMyMapper _myMapper)
+            IMapper _myMapper)
         {
             this.menteeRepository = _imenteeRepository;
             this.levelRepository = _levelRepository;

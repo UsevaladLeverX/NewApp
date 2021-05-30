@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace NewApp.Services.Views.IMapper
 {
-    public interface IMyMapper
+    public interface IMapper
     {
         List<SelectListItem> ListOfPositions();
         Level CreateLevelConfig(CreateLevelView model);

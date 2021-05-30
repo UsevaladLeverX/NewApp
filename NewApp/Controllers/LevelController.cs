@@ -13,8 +13,8 @@ namespace NewApp.Controllers
     public class LevelController : Controller
     {
         private readonly ILevelRepository levelRepository;
-        private readonly IMyMapper myMapper;
-        public LevelController(ILevelRepository _levelRepository, IMyMapper _myMapper)
+        private readonly IMapper myMapper;
+        public LevelController(ILevelRepository _levelRepository, IMapper _myMapper)
         {
             this.levelRepository = _levelRepository;
             this.myMapper = _myMapper;
