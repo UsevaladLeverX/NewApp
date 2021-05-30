@@ -2,6 +2,7 @@
 using NewApp.Domain.Core;
 using NewApp.Domain.Interfaces;
 using NewApp.Services.Views;
+using NewApp.Services.Views.IMapper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,25 +13,15 @@ namespace NewApp.Controllers
     public class LevelController : Controller
     {
         private readonly ILevelRepository levelRepository;
-        private readonly IIndexConfig<IndexLevelView> indexConfig;
-        private readonly ICreateConfig<Level, CreateLevelView> createConfig;
-        private readonly IEditConfig<EditLevelView, Level> editConfig;
-        private readonly IDeleteConfig<DeleteLevelView> deleteConfig;
-        public LevelController(ILevelRepository _levelRepository,
-            IIndexConfig<IndexLevelView> _indexConfig,
-            ICreateConfig<Level, CreateLevelView> _createConfig,
-            IEditConfig<EditLevelView, Level> _editConfig,
-            IDeleteConfig<DeleteLevelView> _deleteConfig)
+        private readonly IMyMapper myMapper;
+        public LevelController(ILevelRepository _levelRepository, IMyMapper _myMapper)
         {
-            this.indexConfig = _indexConfig;
             this.levelRepository = _levelRepository;
-            this.createConfig = _createConfig;
-            this.editConfig = _editConfig;
-            this.deleteConfig = _deleteConfig;
+            this.myMapper = _myMapper;
         }
         public IActionResult Index()
         {
-            return View(indexConfig.Config());
+            return View(myMapper.IndexLevelConfig());
         }
         public IActionResult Create()
         {
@@ -41,8 +32,7 @@ namespace NewApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                
-                levelRepository.Create(createConfig.Config(model));
+                levelRepository.Create(myMapper.CreateLevelConfig(model));
                 levelRepository.Save();
                 return RedirectToAction("Index");
             }
@@ -52,14 +42,14 @@ namespace NewApp.Controllers
         {
             if (id == null)
                 return View();
-            return View(editConfig.Config_1(id));
+            return View(myMapper.EditLevelConfig_1(id));
         }
         [HttpPost]
         public ActionResult Edit(EditLevelView model)
         {
             if (ModelState.IsValid)
             {
-                levelRepository.Update(editConfig.Config_2(model));
+                levelRepository.Update(myMapper.EditLevelConfig_2(model));
                 levelRepository.Save();
                 return RedirectToAction("Index");
             }
@@ -67,7 +57,7 @@ namespace NewApp.Controllers
         }
         public IActionResult Delete(int id)
         {
-            levelRepository.Delete(deleteConfig.Config(id).LevelId);
+            levelRepository.Delete(myMapper.DeleteLevelConfig(id).LevelId);
             levelRepository.Save();
             return RedirectToAction(nameof(Index));
         }
@@ -77,11 +67,11 @@ namespace NewApp.Controllers
             {
                 return NotFound();
             }
-            if (editConfig.Config_1(id) == null)
+            if (myMapper.EditLevelConfig_1(id) == null)
             {
                 return NotFound();
             }
-            return View(editConfig.Config_1(id));
+            return View(myMapper.EditLevelConfig_1(id));
         }
     }
 }
