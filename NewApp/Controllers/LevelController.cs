@@ -13,15 +13,15 @@ namespace NewApp.Controllers
     public class LevelController : Controller
     {
         private readonly ILevelRepository levelRepository;
-        private readonly IMapper myMapper;
-        public LevelController(ILevelRepository _levelRepository, IMapper _myMapper)
+        private readonly IMapper mapper;
+        public LevelController(ILevelRepository _levelRepository, IMapper _mapper)
         {
             this.levelRepository = _levelRepository;
-            this.myMapper = _myMapper;
+            this.mapper = _mapper;
         }
         public IActionResult Index()
         {
-            return View(myMapper.IndexLevelConfig());
+            return View(mapper.IndexLevelConfig());
         }
         public IActionResult Create()
         {
@@ -32,7 +32,7 @@ namespace NewApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                levelRepository.Create(myMapper.CreateLevelConfig(model));
+                levelRepository.Create(mapper.CreateLevelConfig(model));
                 levelRepository.Save();
                 return RedirectToAction("Index");
             }
@@ -42,14 +42,14 @@ namespace NewApp.Controllers
         {
             if (id == null)
                 return View();
-            return View(myMapper.EditLevelConfig_1(id));
+            return View(mapper.EditLevelConfig_1(id));
         }
         [HttpPost]
         public ActionResult Edit(EditLevelView model)
         {
             if (ModelState.IsValid)
             {
-                levelRepository.Update(myMapper.EditLevelConfig_2(model));
+                levelRepository.Update(mapper.EditLevelConfig_2(model));
                 levelRepository.Save();
                 return RedirectToAction("Index");
             }
@@ -57,7 +57,7 @@ namespace NewApp.Controllers
         }
         public IActionResult Delete(int id)
         {
-            levelRepository.Delete(myMapper.DeleteLevelConfig(id).LevelId);
+            levelRepository.Delete(mapper.DeleteLevelConfig(id).LevelId);
             levelRepository.Save();
             return RedirectToAction(nameof(Index));
         }
@@ -67,11 +67,11 @@ namespace NewApp.Controllers
             {
                 return NotFound();
             }
-            if (myMapper.EditLevelConfig_1(id) == null)
+            if (mapper.EditLevelConfig_1(id) == null)
             {
                 return NotFound();
             }
-            return View(myMapper.EditLevelConfig_1(id));
+            return View(mapper.EditLevelConfig_1(id));
         }
     }
 }

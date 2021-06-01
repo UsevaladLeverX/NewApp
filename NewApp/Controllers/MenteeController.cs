@@ -14,35 +14,35 @@ namespace NewApp.Controllers
     {
         private readonly IMenteeRepository menteeRepository;
         private readonly ILevelRepository levelRepository;
-        private readonly IMapper myMapper;
+        private readonly IMapper mapper;
         public MenteeController(IMenteeRepository _imenteeRepository, ILevelRepository _levelRepository,
-            IMapper _myMapper)
+            IMapper _mapper)
         {
             this.menteeRepository = _imenteeRepository;
             this.levelRepository = _levelRepository;
-            this.myMapper = _myMapper;
+            this.mapper = _mapper;
         }
 
         public async Task<IActionResult> ShowSearchForm()
         {
-            myMapper.IndexMenteeConfig();
+            mapper.IndexMenteeConfig();
             return View();
         }
 
         public async Task<IActionResult> ShowSearchResultsName(string SearchLetter)
         {
             if (SearchLetter == null)
-                return View("Index", myMapper.IndexMenteeConfig());
+                return View("Index", mapper.IndexMenteeConfig());
             else
-                return View("Index", myMapper.IndexMenteeConfig().Where(m => m.MenteeName.Contains(SearchLetter)));
+                return View("Index", mapper.IndexMenteeConfig().Where(m => m.MenteeName.Contains(SearchLetter)));
         }
 
         public async Task<IActionResult> ShowSearchResultsPos(string SearchLetter)
         {
             if (SearchLetter == null)
-                return View("Index", myMapper.IndexMenteeConfig());
+                return View("Index", mapper.IndexMenteeConfig());
             else
-                return View("Index", myMapper.IndexMenteeConfig().Where(m => m.ViewPos.Contains(SearchLetter)));
+                return View("Index", mapper.IndexMenteeConfig().Where(m => m.ViewPos.Contains(SearchLetter)));
         }
 
         public IActionResult Index(string sortOrder)
@@ -50,7 +50,7 @@ namespace NewApp.Controllers
             ViewBag.NameSortParm = sortOrder == "name_des" ? "Name" : "name_des";
             ViewBag.AgeSortParm = sortOrder == "Age" ? "Age_des" : "Age";
             ViewBag.PosSortParm = sortOrder == "Pos_des" ? "Position" : "Pos_des";
-            var mentee = from s in myMapper.IndexMenteeConfig()
+            var mentee = from s in mapper.IndexMenteeConfig()
                          select s;
             switch (sortOrder)
             {
@@ -87,16 +87,16 @@ namespace NewApp.Controllers
 
         public IActionResult Create()
         {
-            ViewBag.Positions = myMapper.ListOfPositions();
+            ViewBag.Positions = mapper.ListOfPositions();
             return View();
         }
         [HttpPost]
         public ActionResult Create(CreateMenteeView model)
         {
-            ViewBag.Positions = myMapper.ListOfPositions();
+            ViewBag.Positions = mapper.ListOfPositions();
             if (ModelState.IsValid)
             {
-                menteeRepository.Create(myMapper.CreateMenteeConfig(model));
+                menteeRepository.Create(mapper.CreateMenteeConfig(model));
                 menteeRepository.Save();
                 return RedirectToAction("Index");
             }
@@ -104,18 +104,18 @@ namespace NewApp.Controllers
         }
         public ActionResult Edit(int? id)
         {
-            ViewBag.Positions = myMapper.ListOfPositions();
+            ViewBag.Positions = mapper.ListOfPositions();
             if (id == null)
                 return View();
-            return View(myMapper.EditMenteeConfig_1(id));
+            return View(mapper.EditMenteeConfig_1(id));
         }
         [HttpPost]
         public ActionResult Edit(EditMenteeView model)
         {
-            ViewBag.Positions = myMapper.ListOfPositions();
+            ViewBag.Positions = mapper.ListOfPositions();
             if (ModelState.IsValid)
             {
-                menteeRepository.Update(myMapper.EditMenteeConfig_2(model));
+                menteeRepository.Update(mapper.EditMenteeConfig_2(model));
                 menteeRepository.Save();
                 return RedirectToAction("Index");
             }
@@ -123,7 +123,7 @@ namespace NewApp.Controllers
         }
         public IActionResult Delete(int id)
         {
-            menteeRepository.Delete(myMapper.DeleteMenteeConfig(id).MenteeId);
+            menteeRepository.Delete(mapper.DeleteMenteeConfig(id).MenteeId);
             menteeRepository.Save();
             return RedirectToAction(nameof(Index));
         }
@@ -133,11 +133,11 @@ namespace NewApp.Controllers
             {
                 return NotFound();
             }
-            if (myMapper.EditMenteeConfig_1(id) == null)
+            if (mapper.EditMenteeConfig_1(id) == null)
             {
                 return NotFound();
             }
-            return View(myMapper.EditMenteeConfig_1(id));
+            return View(mapper.EditMenteeConfig_1(id));
         }
     }
 }
