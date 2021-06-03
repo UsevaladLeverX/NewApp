@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 using NewApp.Domain.Interfaces;
 using NewApp.Domain.Core;
 using NewApp.Services.Views;
-using NewApp.Services.Views.IMapper;
+using AutoMapper;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace NewApp.Controllers
 {
@@ -25,32 +26,79 @@ namespace NewApp.Controllers
 
         public async Task<IActionResult> ShowSearchForm()
         {
-            mapper.IndexMenteeConfig();
+            var mentees = menteeRepository.GetAll();
+            var menteesDTO = mapper.Map<List<IndexMenteeView>>(mentees);
+            foreach (var item in menteesDTO)
+            {
+                foreach (var pos in levelRepository.GetAll())
+                {
+                    if (item.Position == pos.LevelId.ToString())
+                    {
+                        item.ViewPos = pos.Position;
+                    }
+                }
+            }
             return View();
         }
 
         public async Task<IActionResult> ShowSearchResultsName(string SearchLetter)
         {
+            var mentees = menteeRepository.GetAll();
+            var menteesDTO = mapper.Map<List<IndexMenteeView>>(mentees);
+            foreach (var item in menteesDTO)
+            {
+                foreach (var pos in levelRepository.GetAll())
+                {
+                    if (item.Position == pos.LevelId.ToString())
+                    {
+                        item.ViewPos = pos.Position;
+                    }
+                }
+            }
             if (SearchLetter == null)
-                return View("Index", mapper.IndexMenteeConfig());
+                return View("Index", menteesDTO);
             else
-                return View("Index", mapper.IndexMenteeConfig().Where(m => m.MenteeName.Contains(SearchLetter)));
+                return View("Index", menteesDTO.Where(m => m.MenteeName.Contains(SearchLetter)));
         }
 
         public async Task<IActionResult> ShowSearchResultsPos(string SearchLetter)
         {
+            var mentees = menteeRepository.GetAll();
+            var menteesDTO = mapper.Map<List<IndexMenteeView>>(mentees);
+            foreach (var item in menteesDTO)
+            {
+                foreach (var pos in levelRepository.GetAll())
+                {
+                    if (item.Position == pos.LevelId.ToString())
+                    {
+                        item.ViewPos = pos.Position;
+                    }
+                }
+            }
             if (SearchLetter == null)
-                return View("Index", mapper.IndexMenteeConfig());
+                return View("Index", menteesDTO);
             else
-                return View("Index", mapper.IndexMenteeConfig().Where(m => m.ViewPos.Contains(SearchLetter)));
+                return View("Index", menteesDTO.Where(m => m.ViewPos.Contains(SearchLetter)));
         }
 
         public IActionResult Index(string sortOrder)
         {
+            var mentees = menteeRepository.GetAll();
+            var menteesDTO = mapper.Map<List<IndexMenteeView>>(mentees);
+            foreach (var item in menteesDTO)
+            {
+                foreach (var pos in levelRepository.GetAll())
+                {
+                    if (item.Position == pos.LevelId.ToString())
+                    {
+                        item.ViewPos = pos.Position;
+                    }
+                }
+            }
             ViewBag.NameSortParm = sortOrder == "name_des" ? "Name" : "name_des";
             ViewBag.AgeSortParm = sortOrder == "Age" ? "Age_des" : "Age";
             ViewBag.PosSortParm = sortOrder == "Pos_des" ? "Position" : "Pos_des";
-            var mentee = from s in mapper.IndexMenteeConfig()
+            var mentee = from s in menteesDTO
                          select s;
             switch (sortOrder)
             {
@@ -87,16 +135,41 @@ namespace NewApp.Controllers
 
         public IActionResult Create()
         {
-            ViewBag.Positions = mapper.ListOfPositions();
+            var productsList = (from product in levelRepository.GetAll()
+                                select new SelectListItem()
+                                {
+                                    Text = product.Position,
+                                    Value = product.LevelId.ToString(),
+                                }).ToList();
+
+            productsList.Insert(0, new SelectListItem()
+            {
+                Text = "----Select----",
+                Value = string.Empty
+            });
+            ViewBag.Positions = productsList;
             return View();
         }
         [HttpPost]
         public ActionResult Create(CreateMenteeView model)
         {
-            ViewBag.Positions = mapper.ListOfPositions();
+            var productsList = (from product in levelRepository.GetAll()
+                                select new SelectListItem()
+                                {
+                                    Text = product.Position,
+                                    Value = product.LevelId.ToString(),
+                                }).ToList();
+
+            productsList.Insert(0, new SelectListItem()
+            {
+                Text = "----Select----",
+                Value = string.Empty
+            });
+            ViewBag.Positions = productsList;
             if (ModelState.IsValid)
             {
-                menteeRepository.Create(mapper.CreateMenteeConfig(model));
+                var mentee = mapper.Map<Mentee>(model);
+                menteeRepository.Create(mentee);
                 menteeRepository.Save();
                 return RedirectToAction("Index");
             }
@@ -104,18 +177,45 @@ namespace NewApp.Controllers
         }
         public ActionResult Edit(int? id)
         {
-            ViewBag.Positions = mapper.ListOfPositions();
+            var productsList = (from product in levelRepository.GetAll()
+                                select new SelectListItem()
+                                {
+                                    Text = product.Position,
+                                    Value = product.LevelId.ToString(),
+                                }).ToList();
+
+            productsList.Insert(0, new SelectListItem()
+            {
+                Text = "----Select----",
+                Value = string.Empty
+            });
+            ViewBag.Positions = productsList;
+            var mentee = menteeRepository.Get(id.Value);
+            var menteeDTO = mapper.Map<EditMenteeView>(mentee);
             if (id == null)
                 return View();
-            return View(mapper.EditMenteeConfig_1(id));
+            return View(menteeDTO);
         }
         [HttpPost]
         public ActionResult Edit(EditMenteeView model)
         {
-            ViewBag.Positions = mapper.ListOfPositions();
+            var productsList = (from product in levelRepository.GetAll()
+                                select new SelectListItem()
+                                {
+                                    Text = product.Position,
+                                    Value = product.LevelId.ToString(),
+                                }).ToList();
+
+            productsList.Insert(0, new SelectListItem()
+            {
+                Text = "----Select----",
+                Value = string.Empty
+            });
+            ViewBag.Positions = productsList;
             if (ModelState.IsValid)
             {
-                menteeRepository.Update(mapper.EditMenteeConfig_2(model));
+                var mentee = mapper.Map<Mentee>(model);
+                menteeRepository.Update(mentee);
                 menteeRepository.Save();
                 return RedirectToAction("Index");
             }
@@ -123,7 +223,9 @@ namespace NewApp.Controllers
         }
         public IActionResult Delete(int id)
         {
-            menteeRepository.Delete(mapper.DeleteMenteeConfig(id).MenteeId);
+            var mentee = menteeRepository.Get(id);
+            var menteeDTO = mapper.Map<DeleteMenteeView>(mentee);
+            menteeRepository.Delete(menteeDTO.MenteeId);
             menteeRepository.Save();
             return RedirectToAction(nameof(Index));
         }
@@ -133,11 +235,22 @@ namespace NewApp.Controllers
             {
                 return NotFound();
             }
-            if (mapper.EditMenteeConfig_1(id) == null)
+            var mentee = menteeRepository.Get(id);
+            var menteeDTO = mapper.Map<EditMenteeView>(mentee);
+
+            foreach (var pos in levelRepository.GetAll())
+            {
+                if (menteeDTO.Position == pos.LevelId.ToString())
+                {
+                    menteeDTO.ViewPos = pos.Position;
+                }
+            }
+
+            if (menteeDTO == null)
             {
                 return NotFound();
             }
-            return View(mapper.EditMenteeConfig_1(id));
+            return View(menteeDTO);
         }
     }
 }

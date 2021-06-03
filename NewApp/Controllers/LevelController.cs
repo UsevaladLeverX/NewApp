@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using NewApp.Domain.Core;
 using NewApp.Domain.Interfaces;
 using NewApp.Services.Views;
-using NewApp.Services.Views.IMapper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +21,9 @@ namespace NewApp.Controllers
         }
         public IActionResult Index()
         {
-            return View(mapper.IndexLevelConfig());
+            var level = levelRepository.GetAll();
+            var levelDTO=mapper.Map<List<IndexLevelView>>(level);
+            return View(levelDTO);
         }
         public IActionResult Create()
         {
@@ -32,7 +34,8 @@ namespace NewApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                levelRepository.Create(mapper.CreateLevelConfig(model));
+                var level = mapper.Map<Level>(model);
+                levelRepository.Create(level);
                 levelRepository.Save();
                 return RedirectToAction("Index");
             }
@@ -42,14 +45,17 @@ namespace NewApp.Controllers
         {
             if (id == null)
                 return View();
-            return View(mapper.EditLevelConfig_1(id));
+            var level = levelRepository.Get(id.Value);
+            var levelDTO = mapper.Map<EditLevelView>(level);
+            return View(levelDTO);
         }
         [HttpPost]
         public ActionResult Edit(EditLevelView model)
         {
             if (ModelState.IsValid)
             {
-                levelRepository.Update(mapper.EditLevelConfig_2(model));
+                var level = mapper.Map<Level>(model);
+                levelRepository.Update(level);
                 levelRepository.Save();
                 return RedirectToAction("Index");
             }
@@ -57,7 +63,9 @@ namespace NewApp.Controllers
         }
         public IActionResult Delete(int id)
         {
-            levelRepository.Delete(mapper.DeleteLevelConfig(id).LevelId);
+            var level = levelRepository.Get(id);
+            var levelDTO = mapper.Map<DeleteLevelView>(level);
+            levelRepository.Delete(levelDTO.LevelId);
             levelRepository.Save();
             return RedirectToAction(nameof(Index));
         }
@@ -67,11 +75,13 @@ namespace NewApp.Controllers
             {
                 return NotFound();
             }
-            if (mapper.EditLevelConfig_1(id) == null)
+            var level = levelRepository.Get(id);
+            var levelDTO = mapper.Map<EditLevelView>(level);
+            if (levelDTO == null)
             {
                 return NotFound();
             }
-            return View(mapper.EditLevelConfig_1(id));
+            return View(levelDTO);
         }
     }
 }

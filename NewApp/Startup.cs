@@ -16,8 +16,8 @@ using Microsoft.ServiceFabric.Services.Remoting;
 using Microsoft.Web;
 using System.Fabric.Query;
 using NewApp.Services.Views;
-using NewApp.Domain.Core;
-using NewApp.Services.Views.IMapper;
+using AutoMapper;
+using Mapper = NewApp.Services.Views.Mapper;
 
 namespace NewApp
 {
@@ -43,11 +43,17 @@ namespace NewApp
             });
             var connection = @"Server=LXIBY1166\SQLEXPRESS;Database=LeverApp;Trusted_Connection=True;";
             services.AddDbContext<OnionAppContext>(options => options.UseSqlServer(connection));
+            var mappingConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new Mapper());
+            });
+            services.AddAutoMapper(typeof(Mapper));
+            IMapper mapper = mappingConfig.CreateMapper();
+            services.AddSingleton(mapper);
             services.AddMvc();
             services.AddControllersWithViews();
             services.AddTransient<IMenteeRepository, MenteeRepository>();
             services.AddTransient<ILevelRepository, LevelRepository>();
-            services.AddScoped<IMapper, Mapper>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
