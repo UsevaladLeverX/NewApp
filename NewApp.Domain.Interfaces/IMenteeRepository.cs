@@ -9,6 +9,7 @@ namespace NewApp.Domain.Interfaces
 {
     public interface IMenteeRepository
     {
+        IQueryable<Mentee> GetSource();
         IEnumerable<Mentee> GetAll();
         Mentee Get(int id);
         void Create(Mentee item);

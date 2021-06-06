@@ -5,7 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using NewApp.Domain.Core;
 using NewApp.Infrastructure.Data;
+using NewApp.Services.Views.View;
 
 namespace NewApp.Services.Views
 {
@@ -16,5 +18,7 @@ namespace NewApp.Services.Views
         public int Age { get; set; }
         public string Position { get; set; }
         public string ViewPos { get; set; }
+        public PageViewModel PageViewModel { get; set; }
+        public IEnumerable<IndexMenteeView> Mentees { get; set; }
     }
 }

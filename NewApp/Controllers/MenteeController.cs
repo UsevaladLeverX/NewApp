@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using NewApp.Domain.Interfaces;
-using NewApp.Domain.Core;
 using NewApp.Services.Views;
+using NewApp.Domain.Core;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using NewApp.Services.Views.View;
 
 namespace NewApp.Controllers
 {
@@ -24,12 +25,18 @@ namespace NewApp.Controllers
             this.mapper = _mapper;
         }
 
-        public async Task<IActionResult> ShowSearchForm()
+        public IActionResult Index(string SearchLetter, string sortOrder, int page = 1)
         {
-            var mentees = menteeRepository.GetAll();
-            var menteesDTO = mapper.Map<List<IndexMenteeView>>(mentees);
-            foreach (var item in menteesDTO)
+            int pageSize = 10;
+            var source = menteeRepository.GetSource();
+            var count = menteeRepository.GetAll().Count();
+            var items = source.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            var itemsDTO = mapper.Map<List<IndexMenteeView>>(items);
+            PageViewModel pageViewModel = new PageViewModel(count, page, pageSize);
+            foreach (var item in itemsDTO)
             {
+                item.PageViewModel = pageViewModel;
+                item.Mentees = itemsDTO;
                 foreach (var pos in levelRepository.GetAll())
                 {
                     if (item.Position == pos.LevelId.ToString())
@@ -38,53 +45,7 @@ namespace NewApp.Controllers
                     }
                 }
             }
-            return View();
-        }
-
-        public async Task<IActionResult> ShowSearchResultsName(string SearchLetter)
-        {
-            var mentees = menteeRepository.GetAll();
-            var menteesDTO = mapper.Map<List<IndexMenteeView>>(mentees);
-            foreach (var item in menteesDTO)
-            {
-                foreach (var pos in levelRepository.GetAll())
-                {
-                    if (item.Position == pos.LevelId.ToString())
-                    {
-                        item.ViewPos = pos.Position;
-                    }
-                }
-            }
-            if (SearchLetter == null)
-                return View("Index", menteesDTO);
-            else
-                return View("Index", menteesDTO.Where(m => m.MenteeName.Contains(SearchLetter)));
-        }
-
-        public async Task<IActionResult> ShowSearchResultsPos(string SearchLetter)
-        {
-            var mentees = menteeRepository.GetAll();
-            var menteesDTO = mapper.Map<List<IndexMenteeView>>(mentees);
-            foreach (var item in menteesDTO)
-            {
-                foreach (var pos in levelRepository.GetAll())
-                {
-                    if (item.Position == pos.LevelId.ToString())
-                    {
-                        item.ViewPos = pos.Position;
-                    }
-                }
-            }
-            if (SearchLetter == null)
-                return View("Index", menteesDTO);
-            else
-                return View("Index", menteesDTO.Where(m => m.ViewPos.Contains(SearchLetter)));
-        }
-
-        public IActionResult Index(string sortOrder)
-        {
-            var mentees = menteeRepository.GetAll();
-            var menteesDTO = mapper.Map<List<IndexMenteeView>>(mentees);
+            var menteesDTO = mapper.Map<List<IndexMenteeView>>(menteeRepository.GetAll());
             foreach (var item in menteesDTO)
             {
                 foreach (var pos in levelRepository.GetAll())
@@ -98,7 +59,7 @@ namespace NewApp.Controllers
             ViewBag.NameSortParm = sortOrder == "name_des" ? "Name" : "name_des";
             ViewBag.AgeSortParm = sortOrder == "Age" ? "Age_des" : "Age";
             ViewBag.PosSortParm = sortOrder == "Pos_des" ? "Position" : "Pos_des";
-            var mentee = from s in menteesDTO
+            var mentee = from s in itemsDTO
                          select s;
             switch (sortOrder)
             {
@@ -130,7 +91,26 @@ namespace NewApp.Controllers
                     mentee = mentee.OrderBy(s => s.MenteeId);
                     break;
             }
-            return View(mentee.ToList());
+            if(sortOrder!=null)
+            {
+                return View(mentee.ToList());
+            }
+            if (SearchLetter != null)
+            {
+                ViewBag.SearchLetter = SearchLetter;
+                foreach(var item in menteesDTO)
+                {
+                    if(item.ViewPos.ToLower().Contains(SearchLetter.ToLower()))
+                    {
+                        return View("Index", menteesDTO.Where(m => m.ViewPos.ToLower().Contains(SearchLetter.ToLower())));
+                    }
+                    if(item.MenteeName.ToLower().Contains(SearchLetter.ToLower()))
+                    {
+                        return View("Index", menteesDTO.Where(m => m.MenteeName.ToLower().Contains(SearchLetter.ToLower())));
+                    }
+                }
+            }
+            return View(itemsDTO.ToList());
         }
 
         public IActionResult Create()

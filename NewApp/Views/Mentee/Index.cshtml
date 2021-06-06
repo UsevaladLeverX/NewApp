@@ -1,16 +1,41 @@
 ﻿@model IEnumerable<NewApp.Services.Views.IndexMenteeView>
-
 @{
     ViewData["Title"] = "Index";
 }
 
+<style>
+    @@font-face {
+        font-family: 'FontAwesome';
+        src: url('https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/fonts/fontawesome-webfont.woff2') format('woff2'), url('https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/fonts/fontawesome-webfont.woff') format('woff'), url('https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/fonts/fontawesome-webfont.ttf') format('truetype');
+        font-weight: normal;
+        font-style: normal
+    }
+
+    .glyphicon {
+        display: inline-block;
+        font: normal normal normal 14px/1 FontAwesome;
+        font-size: inherit;
+        text-rendering: auto;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale
+    }
+
+    .glyphicon-chevron-right:before {
+        content: "\f054";
+    }
+
+    .glyphicon-chevron-left:before {
+        content: "\f053";
+    }
+</style>
 <h1>Mentees</h1>
 
 <div class="col-md-4">
-    <form asp-action="ShowSearchResultsName">
+    @using (Html.BeginForm("Index", "Mentee", FormMethod.Post))
+    {
         <div class="form-group">
             <th>
-                @Html.DisplayName("Search by mentee name")
+                @Html.DisplayName("Search by mentee name or position")
             </th>
             <label for="SearchLetter" class="control-label"></label>
             <input name="SearchLetter" class="form-control" />
@@ -18,19 +43,7 @@
         <div class="form-group">
             <input type="submit" value="Search" class="btn btn-primary" />
         </div>
-    </form>
-    <form asp-action="ShowSearchResultsPos">
-        <div class="form-group">
-            <th>
-                @Html.DisplayName("Search by position")
-            </th>
-            <label for="SearchLetter" class="control-label"></label>
-            <input name="SearchLetter" class="form-control" />
-        </div>
-        <div class="form-group">
-            <input type="submit" value="Search" class="btn btn-primary" />
-        </div>
-    </form>
+    }
 </div>
 
 <p>
@@ -40,21 +53,21 @@
     <thead>
         @using (Html.BeginForm("MenteeController", "IndexMenteeView", FormMethod.Post))
         {
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.MenteeId)
-            </th>
-            <th>
-                @Html.ActionLink($"Mentee Name {ViewBag.Name}", "Index", new { sortOrder = ViewBag.NameSortParm })
-            </th>
-            <th>
-                @Html.ActionLink($"Age {ViewBag.Age}", "Index", new { sortOrder = ViewBag.AgeSortParm })
-            </th>
-            <th>
-                @Html.ActionLink($"Position {ViewBag.Pos}", "Index", new { sortOrder = ViewBag.PosSortParm })
-            </th>
-            <th></th>
-        </tr>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.MenteeId)
+                </th>
+                <th>
+                    @Html.ActionLink($"Mentee Name {ViewBag.Name}", "Index", new { sortOrder = ViewBag.NameSortParm })
+                </th>
+                <th>
+                    @Html.ActionLink($"Age {ViewBag.Age}", "Index", new { sortOrder = ViewBag.AgeSortParm })
+                </th>
+                <th>
+                    @Html.ActionLink($"Position {ViewBag.Pos}", "Index", new { sortOrder = ViewBag.PosSortParm })
+                </th>
+                <th></th>
+            </tr>
         }
     </thead>
     <tbody>
@@ -65,15 +78,19 @@
                 <tr>
                     <td>
                         @Html.DisplayFor(modelItem => item.MenteeId)
+                        @*@item.MenteeId*@
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.MenteeName)
+                        @*@item.MenteeName*@
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Age)
+                        @*@item.Age*@
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.ViewPos)
+                        @*@item.LevelId*@
                     </td>
                     <td>
                         <a asp-action="Edit" asp-route-id="@item.MenteeId">Edit</a> |
@@ -81,7 +98,25 @@
                         <a asp-action="Delete" asp-route-id="@item.MenteeId">Delete</a>
                     </td>
                 </tr>
-             }
-         }
-        </tbody>
+            }
+        }
+    </tbody>
 </table>
+@if (ViewBag.SearchLetter == null) { 
+@if (Model.First().PageViewModel.HasPreviousPage)
+{
+    <a asp-action="Index"
+       asp-route-page="@(Model.First().PageViewModel.PageNumber - 1)"
+       class="btn btn-outline-dark">
+        Back
+    </a>
+}
+@if (Model.First().PageViewModel.HasNextPage && ViewBag.SearchLetter == null)
+{
+    <a asp-action="Index"
+       asp-route-page="@(Model.First().PageViewModel.PageNumber + 1)"
+       class="btn btn-outline-dark">
+        Next
+    </a>
+}
+}

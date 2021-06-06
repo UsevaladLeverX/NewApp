@@ -16,6 +16,10 @@ namespace NewApp.Infrastructure.Data
         {
             this.db = new OnionAppContext();
         }
+        public IQueryable<Mentee> GetSource()
+        {
+            return db.Mentee;
+        }
         public IEnumerable<Mentee> GetAll()
         {
             return db.Mentee;
