@@ -37,24 +37,12 @@ namespace NewApp.Controllers
             {
                 item.PageViewModel = pageViewModel;
                 item.Mentees = itemsDTO;
-                foreach (var pos in levelRepository.GetAll())
-                {
-                    if (item.Position == pos.LevelId.ToString())
-                    {
-                        item.ViewPos = pos.Position;
-                    }
-                }
+                item.ViewPos = levelRepository.Get(item.Position, true);
             }
             var menteesDTO = mapper.Map<List<IndexMenteeView>>(menteeRepository.GetAll());
             foreach (var item in menteesDTO)
             {
-                foreach (var pos in levelRepository.GetAll())
-                {
-                    if (item.Position == pos.LevelId.ToString())
-                    {
-                        item.ViewPos = pos.Position;
-                    }
-                }
+                item.ViewPos = levelRepository.Get(item.Position, true);
             }
             ViewBag.NameSortParm = sortOrder == "name_des" ? "Name" : "name_des";
             ViewBag.AgeSortParm = sortOrder == "Age" ? "Age_des" : "Age";
@@ -217,15 +205,7 @@ namespace NewApp.Controllers
             }
             var mentee = menteeRepository.Get(id);
             var menteeDTO = mapper.Map<EditMenteeView>(mentee);
-
-            foreach (var pos in levelRepository.GetAll())
-            {
-                if (menteeDTO.Position == pos.LevelId.ToString())
-                {
-                    menteeDTO.ViewPos = pos.Position;
-                }
-            }
-
+            menteeDTO.ViewPos = levelRepository.Get(menteeDTO.Position, true);
             if (menteeDTO == null)
             {
                 return NotFound();

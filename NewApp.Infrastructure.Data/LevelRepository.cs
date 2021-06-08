@@ -24,6 +24,10 @@ namespace NewApp.Infrastructure.Data
         {
             return db.Level.Find(id);
         }
+        public string Get(int id, bool key)
+        {
+            return db.Level.Find(id).Position;
+        }
         public void Create(Level Level)
         {
             db.Level.Add(Level);

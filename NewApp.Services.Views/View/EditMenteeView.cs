@@ -15,7 +15,7 @@ namespace NewApp.Services.Views
     public class EditMenteeView
     {
         public int MenteeId { get; set; }
-        public string Position { get; set; }
+        public int Position { get; set; }
         public string ViewPos { get; set; }
         public string MenteeName { get; set; }
         public int Age { get; set; }

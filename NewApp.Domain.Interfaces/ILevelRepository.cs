@@ -11,6 +11,7 @@ namespace NewApp.Domain.Interfaces
     {
         IEnumerable<Level> GetAll();
         Level Get(int id);
+        string Get(int id, bool key);
         void Create(Level item);
         void Update(Level item);
         void Delete(int id);
